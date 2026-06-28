@@ -11,11 +11,8 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await api.post('/auth/login', { email, password })
-      
-      const token = response.data
-      
-      login(token)
+      await api.post('/auth/login', { email, password })
+      login()
       navigate('/dashboard')
     } catch (error) {
       console.error('Erro ao fazer login:', error)
@@ -41,7 +38,7 @@ function Login() {
           placeholder="Senha"
           className="border border-gray-300 rounded-lg p-3 w-full outline-none"
         />
-        <button 
+        <button
           onClick={handleLogin}
           className="bg-blue-600 text-white rounded-lg p-3 w-full font-semibold hover:bg-blue-700"
         >

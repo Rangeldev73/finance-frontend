@@ -1,23 +1,20 @@
 import { createContext, useContext, useState } from 'react'
-import { setAuthToken } from '../services/api'
+import api from '../services/api'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(null)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  const login = (token) => {
-    setToken(token)
-    setAuthToken(token)
-    }
+  const login = () => setIsAuthenticated(true)
 
-  const logout = () => {
-    setToken(null)
-    setAuthToken(null)
-    }
+  const logout = async () => {
+    await api.post('/auth/logout')
+    setIsAuthenticated(false)
+  }
 
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   )
