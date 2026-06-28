@@ -25,6 +25,7 @@ function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm flex flex-col gap-4">
+        <h2 className="text-xl font-bold text-blue-400 text-center">Rajo Finance</h2>
         <h1 className="text-2xl font-bold text-gray-800">Entrar</h1>
         <input
           type="email"
