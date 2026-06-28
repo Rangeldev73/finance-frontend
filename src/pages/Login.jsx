@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import api from '../services/api'
+import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 function Login() {
+  const { login } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const navigate = useNavigate()
 
   const handleLogin = async () => {
     try {
@@ -11,7 +15,8 @@ function Login() {
       
       const token = response.data
       
-      console.log('Token recebido:', token)
+      login(token)
+      navigate('/dashboard')
     } catch (error) {
       console.error('Erro ao fazer login:', error)
     }
