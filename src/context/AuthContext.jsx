@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react'
+import { setAuthToken } from '../services/api'
 
 const AuthContext = createContext(null)
 
@@ -7,11 +8,13 @@ export function AuthProvider({ children }) {
 
   const login = (token) => {
     setToken(token)
-  }
+    setAuthToken(token)
+    }
 
   const logout = () => {
     setToken(null)
-  }
+    setAuthToken(null)
+    }
 
   return (
     <AuthContext.Provider value={{ token, login, logout }}>
