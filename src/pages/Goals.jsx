@@ -14,6 +14,7 @@ function Goals() {
     year: new Date().getFullYear(),
     categoryId: ''
   })
+  const [editingId, setEditingId] = useState(null)
   const { logout } = useAuth()
   const navigate = useNavigate()
 
@@ -32,19 +33,49 @@ function Goals() {
     navigate('/')
   }
 
+  const resetForm = () => {
+    setForm({
+      name: '',
+      limitAmount: '',
+      month: new Date().getMonth() + 1,
+      year: new Date().getFullYear(),
+      categoryId: ''
+    })
+    setEditingId(null)
+  }
+
   const handleSubmit = async () => {
     try {
-      const res = await api.post('/goals', form)
-      setGoals(atual => [...atual, res.data])
-      setForm({
-        name: '',
-        limitAmount: '',
-        month: new Date().getMonth() + 1,
-        year: new Date().getFullYear(),
-        categoryId: ''
-      })
+      if (editingId) {
+        const res = await api.put(`/goals/${editingId}`, form)
+        setGoals(atual => atual.map(g => g.id === editingId ? res.data : g))
+      } else {
+        const res = await api.post('/goals', form)
+        setGoals(atual => [...atual, res.data])
+      }
+      resetForm()
     } catch (err) {
-      console.error('Erro ao criar meta:', err)
+      console.error('Erro ao salvar meta:', err)
+    }
+  }
+
+  const handleEdit = (goal) => {
+    setForm({
+      name: goal.name,
+      limitAmount: goal.limitAmount,
+      month: goal.month,
+      year: goal.year,
+      categoryId: goal.categoryId
+    })
+    setEditingId(goal.id)
+  }
+
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`/goals/${id}`)
+      setGoals(atual => atual.filter(g => g.id !== id))
+    } catch (err) {
+      console.error('Erro ao excluir meta:', err)
     }
   }
 
@@ -111,12 +142,22 @@ function Goals() {
               className="bg-gray-700 rounded-lg p-3 outline-none flex-1"
             />
           </div>
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-600 hover:bg-blue-700 rounded-lg p-3 font-semibold"
-          >
-            Adicionar
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleSubmit}
+              className="bg-blue-600 hover:bg-blue-700 rounded-lg p-3 font-semibold flex-1"
+            >
+              {editingId ? 'Salvar' : 'Adicionar'}
+            </button>
+            {editingId && (
+              <button
+                onClick={resetForm}
+                className="bg-gray-600 hover:bg-gray-700 rounded-lg p-3 font-semibold px-6"
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
         </div>
 
         <div>
@@ -146,6 +187,20 @@ function Goals() {
                   <span className="text-sm text-gray-400">
                     R$ {goal.currentAmount?.toFixed(2)} / R$ {goal.limitAmount?.toFixed(2)}
                   </span>
+                  <div className="flex gap-3 mt-1">
+                    <button
+                      onClick={() => handleEdit(goal)}
+                      className="text-blue-400 hover:text-blue-300 text-sm"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(goal.id)}
+                      className="text-red-400 hover:text-red-300 text-sm"
+                    >
+                      Excluir
+                    </button>
+                  </div>
                 </div>
               )
             })}
