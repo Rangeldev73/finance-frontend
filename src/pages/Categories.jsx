@@ -7,6 +7,7 @@ import { COLORS } from '../constants/colors'
 function Categories() {
   const [categories, setCategories] = useState([])
   const [form, setForm] = useState({ name: '', color: COLORS[0].hex })
+  const [editingId, setEditingId] = useState(null)
   const { logout } = useAuth()
   const navigate = useNavigate()
 
@@ -19,13 +20,37 @@ function Categories() {
     navigate('/')
   }
 
+  const resetForm = () => {
+    setForm({ name: '', color: COLORS[0].hex })
+    setEditingId(null)
+  }
+
   const handleSubmit = async () => {
     try {
-      const res = await api.post('/categories', form)
-      setCategories(atual => [...atual, res.data])
-      setForm({ name: '', color: COLORS[0].hex })
+      if (editingId) {
+        const res = await api.put(`/categories/${editingId}`, form)
+        setCategories(atual => atual.map(c => c.id === editingId ? res.data : c))
+      } else {
+        const res = await api.post('/categories', form)
+        setCategories(atual => [...atual, res.data])
+      }
+      resetForm()
     } catch (err) {
-      console.error('Erro ao criar categoria:', err)
+      console.error('Erro ao salvar categoria:', err)
+    }
+  }
+
+  const handleEdit = (category) => {
+    setForm({ name: category.name, color: category.color })
+    setEditingId(category.id)
+  }
+
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`/categories/${id}`)
+      setCategories(atual => atual.filter(c => c.id !== id))
+    } catch (err) {
+      console.error('Erro ao excluir categoria:', err)
     }
   }
 
@@ -66,12 +91,22 @@ function Categories() {
               <option key={c.hex} value={c.hex}>{c.name}</option>
             ))}
           </select>
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-600 hover:bg-blue-700 rounded-lg p-3 font-semibold"
-          >
-            Adicionar
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleSubmit}
+              className="bg-blue-600 hover:bg-blue-700 rounded-lg p-3 font-semibold flex-1"
+            >
+              {editingId ? 'Salvar' : 'Adicionar'}
+            </button>
+            {editingId && (
+              <button
+                onClick={resetForm}
+                className="bg-gray-600 hover:bg-gray-700 rounded-lg p-3 font-semibold px-6"
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
         </div>
 
         <div>
@@ -80,13 +115,29 @@ function Categories() {
             {categories.map(category => (
               <div
                 key={category.id}
-                className="bg-gray-800 rounded-lg p-4 flex items-center gap-3"
+                className="bg-gray-800 rounded-lg p-4 flex items-center justify-between gap-3"
               >
-                <div
-                  className="w-4 h-4 rounded-full"
-                  style={{ backgroundColor: category.color }}
-                />
-                <span>{category.name}</span>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{ backgroundColor: category.color }}
+                  />
+                  <span>{category.name}</span>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => handleEdit(category)}
+                    className="text-blue-400 hover:text-blue-300 text-sm"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDelete(category.id)}
+                    className="text-red-400 hover:text-red-300 text-sm"
+                  >
+                    Excluir
+                  </button>
+                </div>
               </div>
             ))}
           </div>
