@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
 import Categories from './pages/Categories'
+import Goals from './pages/Goals'
 import PrivateRoute from './components/PrivateRoute'
 
 function App() {
@@ -30,6 +31,14 @@ function App() {
         element={
           <PrivateRoute>
             <Categories />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/goals"
+        element={
+          <PrivateRoute>
+            <Goals />
           </PrivateRoute>
         }
       />
