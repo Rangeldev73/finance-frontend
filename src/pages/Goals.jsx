@@ -14,6 +14,8 @@ function Goals() {
     categoryId: ''
   })
   const [editingId, setEditingId] = useState(null)
+  const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1)
+  const [filterYear, setFilterYear] = useState(new Date().getFullYear())
 
   useEffect(() => {
     Promise.all([
@@ -70,6 +72,8 @@ function Goals() {
       console.error('Erro ao excluir meta:', err)
     }
   }
+
+  const filteredGoals = goals.filter(g => g.month === filterMonth && g.year === filterYear)
 
   return (
     <div className="flex min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
@@ -141,8 +145,27 @@ function Goals() {
 
         <div>
           <h2 className="text-xl font-semibold mb-4">Minhas Metas</h2>
+
+          <div className="flex gap-3 mb-4">
+            <select
+              value={filterMonth}
+              onChange={(e) => setFilterMonth(Number(e.target.value))}
+              className="bg-gray-700 rounded-lg p-3 outline-none flex-1"
+            >
+              {MONTHS.map((name, index) => (
+                <option key={index + 1} value={index + 1}>{name}</option>
+              ))}
+            </select>
+            <input
+              type="number"
+              value={filterYear}
+              onChange={(e) => setFilterYear(Number(e.target.value))}
+              className="bg-gray-700 rounded-lg p-3 outline-none w-24"
+            />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {goals.map(goal => {
+            {filteredGoals.map(goal => {
               const percentual = Math.min((goal.currentAmount / goal.limitAmount) * 100, 100)
               return (
                 <div key={goal.id} className="bg-gray-800 rounded-lg p-4 flex flex-col gap-2">
@@ -183,6 +206,9 @@ function Goals() {
                 </div>
               )
             })}
+            {filteredGoals.length === 0 && (
+              <p className="text-gray-400 col-span-full">Nenhuma meta encontrada para esse período.</p>
+            )}
           </div>
         </div>
       </main>
