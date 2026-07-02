@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../services/api'
 import Sidebar from '../components/Sidebar'
+import { MONTHS } from '../constants/months'
 
 function Transactions() {
   const [transactions, setTransactions] = useState([])
@@ -12,11 +13,22 @@ function Transactions() {
     categoryId: ''
   })
   const [editingId, setEditingId] = useState(null)
+  const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1)
+  const [filterYear, setFilterYear] = useState(new Date().getFullYear())
 
   useEffect(() => {
-    api.get('/transactions').then(res => setTransactions(res.data))
     api.get('/categories').then(res => setCategories(res.data))
   }, [])
+
+  useEffect(() => {
+    const lastDay = new Date(filterYear, filterMonth, 0).getDate()
+    const startDate = `${filterYear}-${String(filterMonth).padStart(2, '0')}-01`
+    const endDate = `${filterYear}-${String(filterMonth).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
+
+    api.get(`/transactions/filter?startDate=${startDate}&endDate=${endDate}`)
+      .then(res => setTransactions(res.data))
+      .catch(err => console.error('Erro ao filtrar transações:', err))
+  }, [filterMonth, filterYear])
 
   const resetForm = () => {
     setForm({ description: '', amount: '', type: 'INCOME', categoryId: '' })
@@ -121,6 +133,24 @@ function Transactions() {
           </div>
         </div>
 
+        <div className="flex gap-3">
+          <select
+            value={filterMonth}
+            onChange={(e) => setFilterMonth(Number(e.target.value))}
+            className="bg-gray-700 rounded-lg p-3 outline-none flex-1"
+          >
+            {MONTHS.map((name, index) => (
+              <option key={index + 1} value={index + 1}>{name}</option>
+            ))}
+          </select>
+          <input
+            type="number"
+            value={filterYear}
+            onChange={(e) => setFilterYear(Number(e.target.value))}
+            className="bg-gray-700 rounded-lg p-3 outline-none w-24"
+          />
+        </div>
+
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
@@ -159,6 +189,9 @@ function Transactions() {
               ))}
             </tbody>
           </table>
+          {transactions.length === 0 && (
+            <p className="text-gray-400 mt-4">Nenhuma transação encontrada para esse período.</p>
+          )}
         </div>
       </main>
     </div>
