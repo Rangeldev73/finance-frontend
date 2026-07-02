@@ -47,25 +47,24 @@ function Categories() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-900 text-white">
-
+    <div className="flex min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
       <Sidebar />
 
-      <main className="flex-1 p-8 flex flex-col gap-8">
+      <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8 flex flex-col gap-6">
         <h1 className="text-3xl font-bold">Categorias</h1>
 
-        <div className="bg-gray-800 rounded-xl p-6 flex flex-col gap-4">
+        <div className="bg-gray-800 rounded-xl p-4 md:p-6 flex flex-col gap-4">
           <input
             type="text"
             placeholder="Nome da categoria"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="bg-gray-700 rounded-lg p-3 outline-none"
+            className="bg-gray-700 rounded-lg p-3 outline-none w-full"
           />
           <select
             value={form.color}
             onChange={(e) => setForm({ ...form, color: e.target.value })}
-            className="bg-gray-700 rounded-lg p-3 outline-none"
+            className="bg-gray-700 rounded-lg p-3 outline-none w-full"
           >
             {COLORS.map(c => (
               <option key={c.hex} value={c.hex}>{c.name}</option>
@@ -91,20 +90,20 @@ function Categories() {
 
         <div>
           <h2 className="text-xl font-semibold mb-4">Minhas Categorias</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {categories.map(category => (
               <div
                 key={category.id}
                 className="bg-gray-800 rounded-lg p-4 flex items-center justify-between gap-3"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 min-w-0">
                   <div
-                    className="w-4 h-4 rounded-full"
+                    className="w-4 h-4 rounded-full flex-shrink-0"
                     style={{ backgroundColor: category.color }}
                   />
                   <span>{category.name}</span>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-shrink-0">
                   <button
                     onClick={() => handleEdit(category)}
                     className="text-blue-400 hover:text-blue-300 text-sm"
@@ -122,7 +121,6 @@ function Categories() {
             ))}
           </div>
         </div>
-
       </main>
     </div>
   )

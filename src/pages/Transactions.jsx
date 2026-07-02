@@ -30,7 +30,6 @@ function Transactions() {
       type: form.type,
       categoryId: parseInt(form.categoryId)
     }
-
     try {
       if (editingId) {
         const res = await api.put(`/transactions/${editingId}`, payload)
@@ -65,32 +64,31 @@ function Transactions() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-900 text-white">
-
+    <div className="flex min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
       <Sidebar />
 
-      <main className="flex-1 p-8">
-        <h1 className="text-3xl font-bold mb-6">Transações</h1>
+      <main className="flex-1 min-w-0 p-4 md:p-8 pb-20 md:pb-8 flex flex-col gap-6">
+        <h1 className="text-3xl font-bold">Transações</h1>
 
-        <div className="bg-gray-800 rounded-xl p-6 mb-8 flex flex-col gap-4">
+        <div className="bg-gray-800 rounded-xl p-4 md:p-6 flex flex-col gap-4">
           <input
             type="text"
             placeholder="Descrição"
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="bg-gray-700 rounded-lg p-3 outline-none"
+            className="bg-gray-700 rounded-lg p-3 outline-none w-full"
           />
           <input
             type="number"
             placeholder="Valor"
             value={form.amount}
             onChange={(e) => setForm({ ...form, amount: e.target.value })}
-            className="bg-gray-700 rounded-lg p-3 outline-none"
+            className="bg-gray-700 rounded-lg p-3 outline-none w-full"
           />
           <select
             value={form.type}
             onChange={(e) => setForm({ ...form, type: e.target.value })}
-            className="bg-gray-700 rounded-lg p-3 outline-none"
+            className="bg-gray-700 rounded-lg p-3 outline-none w-full"
           >
             <option value="INCOME">Receita</option>
             <option value="EXPENSES">Despesa</option>
@@ -98,7 +96,7 @@ function Transactions() {
           <select
             value={form.categoryId}
             onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
-            className="bg-gray-700 rounded-lg p-3 outline-none"
+            className="bg-gray-700 rounded-lg p-3 outline-none w-full"
           >
             <option value="">Selecione uma categoria</option>
             {categories.map(c => (
@@ -123,46 +121,45 @@ function Transactions() {
           </div>
         </div>
 
-        <table className="w-full text-left">
-          <thead>
-            <tr className="text-gray-400 border-b border-gray-700">
-              <th className="pb-3">Descrição</th>
-              <th className="pb-3">Valor</th>
-              <th className="pb-3">Tipo</th>
-              <th className="pb-3">Categoria</th>
-              <th className="pb-3">Data</th>
-              <th className="pb-3">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map(t => (
-              <tr key={t.id} className="border-b border-gray-800">
-                <td className="py-3">{t.description}</td>
-                <td className={t.type === 'INCOME' ? 'text-green-400 py-3' : 'text-red-400 py-3'}>
-                  R$ {t.amount.toFixed(2)}
-                </td>
-                <td className="py-3">{t.type}</td>
-                <td className="py-3">{t.categoryName ?? '—'}</td>
-                <td className="py-3">{t.createdAt ? new Date(t.createdAt).toLocaleDateString('pt-BR') : '—'}</td>
-                <td className="py-3 flex gap-3">
-                  <button
-                    onClick={() => handleEdit(t)}
-                    className="text-blue-400 hover:text-blue-300"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleDelete(t.id)}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    Excluir
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="text-gray-400 border-b border-gray-700">
+                <th className="pb-3 pr-4 whitespace-nowrap">Descrição</th>
+                <th className="pb-3 pr-4 whitespace-nowrap">Valor</th>
+                <th className="pb-3 pr-4 whitespace-nowrap">Tipo</th>
+                <th className="pb-3 pr-4 whitespace-nowrap">Categoria</th>
+                <th className="pb-3 pr-4 whitespace-nowrap">Data</th>
+                <th className="pb-3 pr-4 whitespace-nowrap">Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-
+            </thead>
+            <tbody>
+              {transactions.map(t => (
+                <tr key={t.id} className="border-b border-gray-800">
+                  <td className="py-3 pr-4 whitespace-nowrap">{t.description}</td>
+                  <td className={`py-3 pr-4 whitespace-nowrap ${t.type === 'INCOME' ? 'text-green-400' : 'text-red-400'}`}>
+                    R$ {t.amount.toFixed(2)}
+                  </td>
+                  <td className="py-3 pr-4 whitespace-nowrap">{t.type}</td>
+                  <td className="py-3 pr-4 whitespace-nowrap">{t.categoryName ?? '—'}</td>
+                  <td className="py-3 pr-4 whitespace-nowrap">
+                    {t.createdAt ? new Date(t.createdAt).toLocaleDateString('pt-BR') : '—'}
+                  </td>
+                  <td className="py-3 pr-4 whitespace-nowrap">
+                    <div className="flex gap-3">
+                      <button onClick={() => handleEdit(t)} className="text-blue-400 hover:text-blue-300">
+                        Editar
+                      </button>
+                      <button onClick={() => handleDelete(t.id)} className="text-red-400 hover:text-red-300">
+                        Excluir
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </main>
     </div>
   )

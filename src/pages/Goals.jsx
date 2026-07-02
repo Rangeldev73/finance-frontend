@@ -72,39 +72,38 @@ function Goals() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-900 text-white">
-
+    <div className="flex min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
       <Sidebar />
 
-      <main className="flex-1 p-8 flex flex-col gap-8">
+      <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8 flex flex-col gap-6">
         <h1 className="text-3xl font-bold">Metas</h1>
 
-        <div className="bg-gray-800 rounded-xl p-6 flex flex-col gap-4">
+        <div className="bg-gray-800 rounded-xl p-4 md:p-6 flex flex-col gap-4">
           <input
             type="text"
             placeholder="Nome da meta"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="bg-gray-700 rounded-lg p-3 outline-none"
+            className="bg-gray-700 rounded-lg p-3 outline-none w-full"
           />
           <input
             type="number"
             placeholder="Limite (R$)"
             value={form.limitAmount}
             onChange={(e) => setForm({ ...form, limitAmount: e.target.value })}
-            className="bg-gray-700 rounded-lg p-3 outline-none"
+            className="bg-gray-700 rounded-lg p-3 outline-none w-full"
           />
           <select
             value={form.categoryId}
             onChange={(e) => setForm({ ...form, categoryId: Number(e.target.value) })}
-            className="bg-gray-700 rounded-lg p-3 outline-none"
+            className="bg-gray-700 rounded-lg p-3 outline-none w-full"
           >
             <option value="">Selecione uma categoria</option>
             {categories.map(c => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <select
               value={form.month}
               onChange={(e) => setForm({ ...form, month: Number(e.target.value) })}
@@ -119,7 +118,7 @@ function Goals() {
               placeholder="Ano"
               value={form.year}
               onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}
-              className="bg-gray-700 rounded-lg p-3 outline-none flex-1"
+              className="bg-gray-700 rounded-lg p-3 outline-none w-24"
             />
           </div>
           <div className="flex gap-3">
@@ -142,15 +141,15 @@ function Goals() {
 
         <div>
           <h2 className="text-xl font-semibold mb-4">Minhas Metas</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {goals.map(goal => {
               const percentual = Math.min((goal.currentAmount / goal.limitAmount) * 100, 100)
               return (
                 <div key={goal.id} className="bg-gray-800 rounded-lg p-4 flex flex-col gap-2">
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold">{goal.name}</span>
+                    <span className="font-semibold truncate mr-2">{goal.name}</span>
                     {goal.exceeded && (
-                      <span className="text-xs bg-red-500 text-white px-2 py-1 rounded-full">
+                      <span className="text-xs bg-red-500 text-white px-2 py-1 rounded-full flex-shrink-0">
                         Estourado
                       </span>
                     )}
@@ -186,7 +185,6 @@ function Goals() {
             })}
           </div>
         </div>
-
       </main>
     </div>
   )

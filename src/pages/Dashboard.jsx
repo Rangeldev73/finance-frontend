@@ -10,11 +10,10 @@ function Dashboard() {
   }, [])
 
   return (
-    <div className="flex min-h-screen bg-gray-900 text-white">
-
+    <div className="flex min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
       <Sidebar />
 
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8">
         <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
