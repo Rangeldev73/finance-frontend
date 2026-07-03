@@ -7,15 +7,18 @@ function Login() {
   const { login } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
   const handleLogin = async () => {
+    setError('')
     try {
       await api.post('/auth/login', { email, password })
       login()
       navigate('/dashboard')
     } catch (error) {
       console.error('Erro ao fazer login:', error)
+      setError('E-mail ou senha incorretos.')
     }
   }
 
@@ -38,6 +41,7 @@ function Login() {
           placeholder="Senha"
           className="border border-gray-300 rounded-lg p-3 w-full outline-none"
         />
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           onClick={handleLogin}
           className="bg-blue-600 text-white rounded-lg p-3 w-full font-semibold hover:bg-blue-700"
